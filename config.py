@@ -7,8 +7,8 @@ MAIL_PORT = 587
 MAIL_USE_TLS = True
 MAIL_USE_SSL = False
 MAIL_DEBUG = False
-MAIL_USERNAME = 'lg@idealcs.com.au'
-MAIL_PASSWORD = 'h289andd'
+MAIL_USERNAME = 'username'
+MAIL_PASSWORD = 'password'
 WTF_CSRF_ENABLED = True
 SECRET_KEY = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 
