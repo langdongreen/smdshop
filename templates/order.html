@@ -1,0 +1,83 @@
+{% extends "layout.html" %}
+{% block body %}
+<div class="col-md-3 col-md-offset-4">
+
+
+
+  <form action="{{ url_for('order') }}" class="form-horizontal" method="post">
+        <fieldset>
+      {{ customiseForm.csrf_token }}
+
+      <div class="form-group form-inline">
+            <label for="type" class="control-label">Adapter Type</label>
+            <div class="col-4">
+                {{ customiseForm.adapter_type(id="adapter",onchange="update_image()",class="form-control") }}
+                </div>
+        
+    </div>
+
+      
+    <div class="form-group form-inline">
+        <label for="product" class="control-label">Part Number</label>
+
+          {%if product %}
+              {{ customiseForm.productid(text=product,class="form-control") }}
+        {% else %}
+              {{ customiseForm.productid(placeholder="Part Number",class="form-control") }}
+        {% endif %}
+            {{ customiseForm.search(class="btn btn-primary") }}
+         
+              
+     </div>
+      
+     {% if product %}
+     <div class="form-group">
+
+        <div class="alert alert-success" role="alert">
+              <p class="center"><a href={{ url_for('empty_search') }}><span class="glyphicon glyphicon-remove"></span></a> {{ product['name'] }}: <strong>${{ product['cost'] }}</strong>  </p>
+        </div>
+    </div>
+    {% elif product == 10 %}
+          <div class="alert alert-warning" role="alert">
+            Error finding product please try another code 
+          </div>
+
+    {% endif %}
+
+      <div class="form-group">
+                <label for="assemble" class="control-label"> Assembly</label>
+                {{ customiseForm.assemble(class="form-control") }}
+
+    </div>
+    
+    <div class=form-group>
+         <label for="quantity" class="control-label">Quantity</label>
+         {{ customiseForm.qty(class="form-control") }}
+    </div>
+
+    <div class=form-group>
+    <label class="control-label">Total</label>
+
+         {% if total %}
+            ${{ '%0.2f' %total }}
+        {% endif %}
+
+    </div>
+        
+    <div class=form-group>
+
+
+        {{ customiseForm.total(class="btn btn-primary") }} {{ customiseForm.add(class="btn btn-primary") }}
+
+    </div>
+      </fieldset>
+</form>
+
+
+</div>
+<div class="col-md-3">
+
+       <a href="#" id="pcb_link"><img src="" name="pcb" style="height: 100px"></a>
+</div>
+
+{% endblock %}

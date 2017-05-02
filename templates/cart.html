@@ -1,0 +1,201 @@
+{% extends "layout.html" %}
+{% block body %}
+{% if cart %}
+<table class="table table-striped">
+  <tbody>
+    <th><td>Product</td><td>Qty</td><td>Price</td><td>Total</td></th>
+    {% for product in cart %}
+    <tr>
+        <td><a href={{ url_for('remove_row', row_id = loop.index0) }}><span class="glyphicon glyphicon-remove"></span></a></td>
+        <td>{{ product['label'] }} </td><td>{{ product['qty'] }} <a href={{ url_for('add', row_id = loop.index0) }}><span class="glyphicon glyphicon-plus btn btn-xs"></span></a>
+        <a href={{ url_for('minus', row_id = loop.index0) }}><span class="glyphicon glyphicon-minus btn btn-xs"></span></a>
+        </td><td>${{ '%0.2f' %product['price'] }}</td><td>${{ '%0.2f' %(product['qty'] * product ['price']) }}</td>
+    </tr>
+    {% endfor %}
+    <tr><td></td><td></td><td></td><td>Shipping</td><td>${{ '%0.2f' %shipping }}</td></tr>
+    <tr><td></td><td></td><td></td><td>Total</td><td>${{ '%0.2f' %total }}</td></tr>
+    </tbody>
+</table>
+
+<a href={{ url_for('empty') }} class="btn btn-primary">Empty</a>
+          <a href={{ url_for('checkout') }} class="btn btn-primary">Checkout</a>
+{% endif %}
+
+{% if address or addressdata %}
+   
+    <form action="{{ url_for('checkout') }}" class="form-horizontal" method="post">
+                  
+      <div class="col-md-4 col-md-offset-4">
+      
+	<div class="form-group">
+		<label for="firstname_id" class="control-label">First Name</label>
+         
+		{{ address.firstname(class="form-control", _id="firstname_id", value=addressdata['name']) }}
+           
+            
+            {% for message in address.firstname.errors %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+
+            
+	</div>	
+
+
+	<div class="form-group">
+		<label for="surname_id" class="control-label">Surname</label>
+        
+		{{ address.surname(class="form-control", value=addressdata['surname']) }}
+     
+            
+  
+            {% for message in address.surname.errors %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+
+            
+	</div>	
+ 
+	<div class="form-group">
+		<label for="company_id" class="control-label">Company (Optional)</label>
+
+		{{ address.company(class="form-control", value=addressdata['company']) }}
+                       
+
+            {% for message in address.company.errors %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+
+            
+	</div>	
+
+        <div class="form-group">
+		<label for="firstname_id" class="control-label">Address</label>
+
+		{{ address.address1(class="form-control", value=addressdata['address1']) }}
+
+            
+
+            {% for message in address.address1.errors %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+
+            
+	</div>	
+	
+	<div class="form-group">
+		<label for="address2_id" class="control-label">Address (Optional)</label>
+ 
+		{{ address.address2(class="form-control", value=addressdata['address2']) }}
+  
+            
+
+            {% for message in address.address2.errors %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+
+	</div>	
+
+	<div class="form-group">
+		<label for="suburb_id" class="control-label">Suburb</label>
+
+		{{ address.suburb(class="form-control", value=addressdata['suburb']) }}
+
+            
+
+            {% for message in address.suburb.errors %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+
+	</div>	
+
+    <div class="form-group">
+		<label for="state_id" class="control-label">State</label>
+
+		{{ address.state(class="form-control", value=addressdata['state']) }}
+
+            
+
+            {% for message in address.state.errors %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+
+            
+	</div>	
+
+ 
+    <div class="form-group">
+		<label for="postcode_id" class="control-label">Postcode</label>
+
+		{{ address.postcode(class="form-control", value=addressdata['postcode']) }}
+
+            
+
+            {% for message in address.surname.errors %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+
+            
+	</div>	
+	
+    <div class="form-group">
+		<label for="country_id" class="control-label">Country (Optional)</label>
+           
+		{{ address.country(class="form-control", value=addressdata['country']) }}
+
+            
+
+            {% for message in address.country.errors %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+
+            
+	</div>	
+ 
+ 
+    <div class="form-group">
+		<label for="phone_id" class="control-label">Phone (Optional)</label>
+
+		{{ address.phone(class="form-control", value=addressdata['phone']) }}
+
+            
+
+            {% for message in address.phone.errors %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+ 
+            
+	</div>		
+    
+    <div class="form-group">
+		<label for="email_id" class="control-label">Email</label>
+
+		{{ address.email(class="form-control", value=addressdata['email']) }}
+  
+            
+
+            {% for message in address.email.errors %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+
+            
+	</div>	
+ 
+     <div class="form-group">
+     <div class="col align-self-end">
+        {{ address.pay(class="btn btn-primary") }}
+          </div>
+    </div>
+        
+        
+
+        </div>
+        
+        
+        
+                      
+        
+        
+    </form>
+{% endif %}
+
+{% endblock %}

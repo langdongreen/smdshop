@@ -1,0 +1,16 @@
+{% if cart %}
+<table class="table table-striped">
+  <tbody>
+    <th><td>Product</td><td>Qty</td><td>Price</td><td>Total</td></th>
+    {% for product in cart %}
+    <tr>
+        <td><a href={{ url_for('remove_row', row_id = loop.index0) }}><span class="glyphicon glyphicon-remove"></span></a></td>
+        <td>{{ product[0] }} </td><td>{{ product[1] }}</td><td>${{ '%0.2f' %product[2] }}</td><td>${{ '%0.2f' %(product[1] * product [2]) }}</td>
+    </tr>
+
+    {% endfor %}
+    <tr><td></td><td></td><td></td><td>Total</td><td>${{ '%0.2f' %total }}</td></tr>
+    </tbody>
+</table>
+{% endif %}
+

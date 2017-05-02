@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+{% block body %}
+{% for message in contactForm.name.errors %}
+  <div class="flash">{{ message }}</div>
+{% endfor %}
+{% for message in contactForm.email.errors %}
+  <div class="flash">{{ message }}</div>
+{% endfor %}
+{% for message in contactForm.message.errors %}
+  <div class="flash">{{ message }}</div>
+{% endfor %}
+
+ <div class="col-md-4 col-md-offset-4">
+<h1>Contact Us</h1>
+<form action="{{ url_for('contact') }}" class="form-horizontal" method="post">
+        <fieldset>
+      {{ contactForm.csrf_token }}
+
+      <div class="form-group">
+            <label for="type" class="control-label">Name</label>
+            <div>
+                {{ contactForm.name(class="form-control") }}
+            </div>
+        
+    </div>
+    <div class="form-group">
+            <label for="type" class="control-label">Email</label>
+            <div>
+                {{ contactForm.email(class="form-control") }}
+            </div>
+        
+    </div>
+    <div class="form-group">
+            <label for="type" class="control-label">Message</label>
+            <div>
+                {{ contactForm.message(class="form-control") }}
+            </div>
+        
+    </div>
+    
+     <div class=form-group>
+        <div class="control-label"></div>
+        <div>
+            {{ contactForm.send(class="btn btn-primary") }}
+        </div>
+    </div>
+</div>
+{% endblock %}

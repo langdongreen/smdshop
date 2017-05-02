@@ -1,0 +1,75 @@
+{% extends "layout.html" %}
+{% block body %}
+
+
+<table class="table table-striped">
+  <tbody>
+    <th><td>Product</td><td>Qty</td><td>Price</td><td>Total</td></th>
+    {% for product in cart %}
+    <tr>
+        <td><a href={{ url_for('remove_row', row_id = loop.index0) }}><span class="glyphicon glyphicon-remove"></span></a></td>
+        <td>{{ product['label'] }} </td><td>{{ product['qty'] }} <a href={{ url_for('add', row_id = loop.index0) }}><span class="glyphicon glyphicon-plus btn btn-xs"></span></a>
+        <a href={{ url_for('minus', row_id = loop.index0) }}><span class="glyphicon glyphicon-minus btn btn-xs"></span></a>
+        </td><td>${{ '%0.2f' %product['price'] }}</td><td>${{ '%0.2f' %(product['qty'] * product ['price']) }}</td>
+    </tr>
+    {% endfor %}
+    <tr><td></td><td></td><td></td><td>Shipping</td><td>${{ '%0.2f' %shipping }}</td></tr>
+    <tr><td></td><td></td><td></td><td>Total</td><td>${{ '%0.2f' %total }}</td></tr>
+    </tbody>
+</table>
+
+{% if address %}
+<div class="col-5">
+<table>
+    <tr><td>{{ address['name'] }} {{ address['surname']}}</td></tr>
+    <tr><td> {{ address['company'] }}</td></tr>
+    <tr><td>{{ address['address1']}}</td></tr>
+    <tr><td>{{ address['address2']}}</td></tr>
+    <tr><td>{{ address['suburb']}}</td></tr>
+    <tr><td>{{address['state']}} {{address['postcode']}}</td></tr>
+    <tr><td>{{address['country']}}</td><tr>
+    <tr><td>{{address['phone']}}</td></tr>
+    <tr><td>{{address['email']}}</td></tr>
+ </table>
+ </div>
+{% endif %}
+<div class="col-md-4 col-md-offset-4">
+			<form name="topaypal" action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
+				<input type="hidden" name="cmd" value="_xclick">
+				<input type="hidden" name="custom" value="custom"/>
+				<input type="hidden" name="business" value="sales-facilitator@microengines.com.au">
+				<input type="hidden" name="item_name" value="Electronic components">
+				<input type="hidden" name="item_number" value="">
+				<input type="hidden" name="no_shipping" value="1">
+				<input type="hidden" name="amount" value="{{ total }}">
+				<input type="hidden" name="p3" value="1">
+				<input type="hidden" name="t3" value="M">
+				<input type="hidden" name="src" value="1">
+				<input type="hidden" name="sra" value="1">
+        
+        			<input type="hidden" name="return" value="{{ url_for("success", _external = True) }}">
+				<input type="hidden" name="cancel_return" value="{{ url_for("index", _external = True) }}">
+				<input type="hidden" name="notify_url" value="{{ url_for("ipn", _external = True) }}">
+        
+<!--
+				<input type="hidden" name="return" value="{{ url_for('success', _external = True) }}">
+				<input type="hidden" name="cancel_return" value="{{ url_for('index', _external = True) }}">
+				<input type="hidden" name="notify_url" value="{{ url_for('ipn', _external = True) }} ">
+-->
+                        <input type="hidden" name="address1" value="{{ address[4] }}">
+                        <input type="hidden" name="address2" value="{{ address[5] }}">
+                        <input type="hidden" name="city" value="{{ address[6] }}">
+                        <input type="hidden" name="country" value="{{ address[8] }}">
+                        <input type="hidden" name="email" value="{{ address[9] }}">
+                        <input type="hidden" name="first_name" value="{{ address[0] }}">
+                        <input type="hidden" name="last_name" value="{{ address[1] }}">
+                        <input type="hidden" name="state" value="{{ address[7]}}">
+                        <input type="hidden" name="zip" value="{{ address[8] }}">      
+                        <input type="hidden" name="currency_code" value="AUD">                                                                
+        			<input type="submit" value="Pay Now" name="submit" title="PayPal - The safer, easier way to pay online!" class="btn btn-primary">
+			</form>	
+	
+</div>
+
+
+{% endblock %}

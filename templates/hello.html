@@ -1,0 +1,23 @@
+<!doctype html>
+<title></title>
+
+<form action="{{ url_for('index') }}" method="post">
+      <p>
+      {{ form.csrf_token }}
+          {{ form.search(size=80) }}<br>
+      </p>
+      <p><input type="submit" value="Search"></p>
+</form>
+{% if products %}
+    {% for product in products %}
+  <p>Name: {{ product['name'] }}</p>
+  <p>Part Number: {{ product['part'] }}</p>
+  <p>Pins: {{ product['pins'] }}</p>
+  <p>Stock: {{ product['austock'] }}</p>
+  <p>Stock (6-7 Days): {{ product['intstock'] }}</p>
+  <p>Price: ${{ product['cost'] }}</p>
+{% endfor %}
+<u>
+{% else %}
+  <h1>Hello, World!</h1>
+{% endif %}
