@@ -13,6 +13,7 @@ from config import ADMIN, SKYPE, ORDER_EMAIL
 from config import VALIDATION_FAIL, EMPTY_CART, LINE_NOT_FOUND, ORDER_ERROR, RETURN_ERROR
 from config import LOG_SUCCESS, LOG_ERROR, SUCCESSFUL_ORDER
 from config import HOME, BANNER, ABOUT, TERMS, SHIPPING
+from config import API_BASE, API_KEY
 
 app = Flask(__name__)
 
@@ -33,8 +34,6 @@ def index():
 @app.route('/order',methods=["GET","POST"])
 def order():
     
-    api_base = 'https://api.element14.com/catalog/products?&storeInfo.id=au.element14.com&resultsSettings.offset=0&resultsSettings.numberOfResults=100&resultsSettings.refinements.filters=rohsCompliant%2CinStock&resultsSettings.responseGroup=large'
-    api_key = '&callinfo.apiKey=avh6cgjafg3ru289y3z2j7jp&term=id%3A'
     search_term =''
     product = None 
     customiseForm = CustomiseForm()
@@ -48,9 +47,8 @@ def order():
         search_term = customiseForm.productid.data
   
         if search_term != '':
-            api_call = api_base + api_key + search_term  
-
-            product = product_details(api_call)
+            product = get_e14(search_term)
+            
             if product:
                 session['ordering_service'] = product          
         
@@ -363,9 +361,12 @@ def minus(row_id):
 #
 #Process element14 product feed
 #
-def product_details(api_call):
+def get_e14(search_term):
+
     product = 0
     ns = '{http://pf.com/soa/services/v1}'
+    api_call = API_BASE + API_KEY + search_term
+    
     try:
         e = xml.etree.ElementTree.parse(urllib2.urlopen(api_call)).getroot()
     except Exception:

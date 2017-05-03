@@ -1,1 +1,6 @@
 *.pyc
+deploy
+run
+venv/
+_pycache_/
+config.py
