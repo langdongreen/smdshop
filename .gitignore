@@ -4,3 +4,5 @@ run
 venv/
 _pycache_/
 config.py
+ipnout.txt
+orders
