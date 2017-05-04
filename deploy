@@ -1,3 +1,0 @@
-#!/bin/bash
-rsync -av --delete --exclude venv --exclude run --exclude deploy  --delete -e "ssh -i /home/vulpi/private/ghost.pem" * admin@langdongreen.com:/var/www/smd/
-
