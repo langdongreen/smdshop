@@ -257,7 +257,7 @@ def shipping():
     
 @app.route('/ipn',methods=['GET','POST'])
 def ipn():
-    '''Recieve and process IPN details from paypal to verify correct payment and complete order or display error.'''  
+    '''Receive and process IPN details from paypal to verify correct payment and complete order or display error.'''  
     try:
         arg = ''
         request.parameter_storage_class = ImmutableOrderedMultiDict
@@ -328,6 +328,7 @@ def ipn():
         
 @app.route('/emptysearch')        
 def empty_search():
+    '''Empty element14 product ordering_service list'''
     total = 0
     if session.get('ordering_service'):
         total = session['ordering_service']['cost']
@@ -339,6 +340,8 @@ def empty_search():
     
 @app.route('/cart/add/<int:row_id>')
 def add(row_id):
+    '''Add 1 to the qty of row_id in cart list'''
+    
     cart = get_cart()
     
     if cart and row_id < len(cart):
@@ -352,6 +355,7 @@ def add(row_id):
     
 @app.route('/cart/minus/<int:row_id>')
 def minus(row_id):
+    '''Remove 1 from the qnty of row_id in cart list or remove entirely'''
     cart = get_cart()
     
     if cart and row_id < len(cart):
@@ -369,11 +373,8 @@ def minus(row_id):
       
     
 
-#
-#Process element14 product feed
-#
 def get_e14(search_term):
-
+    '''Use element14 API to get the details of the product searched'''
     product = 0
     ns = '{http://pf.com/soa/services/v1}'
     api_call = API_BASE + API_KEY + search_term
@@ -438,23 +439,18 @@ def get_e14(search_term):
     return product
     
     
-#
-#Add product tuple to cart session list
-#
 def add_to_cart(product):
-      
-   if session.get('cart'):
+    '''Add the selected product to the cart session variable'''
+    if session.get('cart'):
        cart = session['cart']
        cart.append(product)
        session['cart'] = cart
-   else:
+    else:
        session['cart'] = [product]
 
-#
-#Make a descriptive list of products in cart
-#
+
 def display_cart():
- 
+    '''Unused'''
     lines = []
 
     '''
@@ -494,18 +490,14 @@ def display_cart():
       '''
     return lines
 
-#
-#Remove entire list from session
-#
 def empty_cart():
+    '''Remove all data from cart, ordering service and address session variables'''
     session['cart'] = []
     session['ordering_service'] = []
     session['address'] = []
 
-#
-#Number of lines in the cart
-#
 def get_lines():
+    '''Return number of lines in the shopping cart'''
     lines = 0
     
     if session.get('cart'):
@@ -514,6 +506,7 @@ def get_lines():
     return lines
     
 def get_shipping():
+    '''Return the amount of shipping for a product from the config file'''
     shipping = 0
     
     if get_lines():
@@ -522,6 +515,7 @@ def get_shipping():
     return shipping
     
 def get_total():
+    '''Return the total price for all cart including shipping'''
     total = 0
     
     if session.get('cart'):
@@ -533,6 +527,7 @@ def get_total():
     return total
     
 def get_cart():
+    '''Return the cart list from the session'''
     cart = None
 
     if session.get('cart'):
@@ -541,6 +536,7 @@ def get_cart():
     return cart
     
 def get_address():
+    '''Return the address details from the session'''
     address = None
     
     if session.get('address'):
@@ -549,6 +545,7 @@ def get_address():
     return address
     
 def get_part():
+    '''Return the element14 part ID from the session'''
     part = None
     
     if session.get('ordering_service'):
@@ -556,24 +553,26 @@ def get_part():
         
     return part
     
-#Check if order forms have been filled in correctly ready for submit
+
 def order_ok():
+    '''Checks if order has something in the cart and an address'''
     ok = False
         
-    #if there is something in the cart and address has been filled in
+
     if get_lines() and get_address():
          ok = True
          
     return ok
 
 def get_contact():
-    
+    '''Return dictionary of contact details from the configuration file'''
     return {"email": ADMIN, "skype": SKYPE}
 
 
  
     
 def send_order():
+    '''Send an email to the ADMIN and customer address with an order summary'''
     customer = None #index of email in address tuple
     address = get_address()
     admin = ORDER_EMAIL
@@ -608,6 +607,7 @@ def send_order():
     send_email(subject,customer,[admin],'',body)
     
 def log_order(message = ''):
+    '''Write the order to a log file 'orders'''
     address = get_address()
     cart = get_cart()
     log = str(datetime.utcnow()) + '\n'
@@ -623,6 +623,7 @@ def log_order(message = ''):
         f.write(log)
     
 def send_error():
+    '''Send an error message to the ADMIN email'''
     admin = ADMIN
     subject = "Order Error"
     body = "<b>ORDER INPUT ERROR</b>"
@@ -647,48 +648,16 @@ def send_error():
     
     
     send_email(subject,admin,[admin],'',body)
-    
-    
-    
-def send_message(sender,recipient,message):
-    customer = None #index of email in address tuple
-    address = get_address()
-    admin = ADMIN
-    subject = "Order"
-    body = ""
-    
-    if(address):
-        customer = address['email'] #index of customer email
-
-    body += "<table><th><td>Product</td><td>Qty</td><td>Price</td><td>Total</td></th>"
-    
-    if get_cart():
-        for l in get_cart():
-            body += "<tr>"
-            for p in l:
-                body += "<td>"+str(p)+"</td>"
-            body += "<td>"+ '%0.2f' %(l['qty'] * l['price']) + "</td>"    
-            body += "</tr>"
-    body += "</table><table>"
-    
-    if get_address():
-        for l in get_address():
-            body +="<tr>"
-            body += "<td>"+str(l)+"</td>"
-            body += "</tr>"
-    
-    body += "</table>"
-    
-    send_email(subject,admin,customer,'',body)
-
+        
 def send_email(subject, sender, recipients, text_body, html_body):
-    
+    '''Actually send email to recipient'''
     msg = Message(subject, sender=sender, recipients=recipients)
     msg.body = text_body
     msg.html = html_body
     mail.send(msg)   
     
 def redirect_url(default='index'):
+    '''Redirect user to previous page'''
     return request.args.get('next') or \
        request.referrer or \
        url_for(default)
