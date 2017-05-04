@@ -20,19 +20,21 @@ app = Flask(__name__)
 app.config.from_object('config')
 mail = Mail(app)
 
-
 @app.route('/<string:page_name>/')
 def static_page(page_name):
+    '''Render static pages from template.'''
+    
     return render_template('%s.html' % page_name)
     
 @app.route('/')
 def index():    
-        
+     '''Render index template with banner, cart and contact details.'''   
 
-    return render_template('index.html', banner = BANNER, lines = get_lines(),contact=get_contact())
+     return render_template('index.html', banner = BANNER, lines = get_lines(),contact=get_contact())
     
 @app.route('/order',methods=["GET","POST"])
 def order():
+    '''Render order template displaying order form and process submitted form data'''
     
     search_term =''
     product = None 
@@ -103,12 +105,15 @@ def order():
     
 @app.route('/about')
 def about():
+    '''Render index template with banner, cart contact details and ABOUT text.'''  
+    
     text = ABOUT
     return render_template('about.html', banner = BANNER, contact=get_contact(), lines = get_lines(), text = text)
 
     
 @app.route('/contact', methods=["GET","POST"])
 def contact():
+    '''Render contact template with contact form and process submitted form data.'''  
     contactForm = ContactForm(csrf_enabled=False)
     
     #if contact form submitted
@@ -139,6 +144,7 @@ def contact():
 
 @app.route('/cart')
 def cart():
+    '''Render cart template to display shopping cart.'''  
     cart = get_cart()
     total = get_total()
     
@@ -151,11 +157,13 @@ def cart():
     
 @app.route('/empty')
 def empty():
+    '''Empty shopping cart list and redirect to order page.'''  
     empty_cart()
     return redirect(url_for('order'))
     
 @app.route('/cart/delete/<int:row_id>')
 def remove_row(row_id):
+    '''Remove one row of shopping cart list.'''  
     cart = get_cart()
     
     if cart and row_id < len(cart):
@@ -169,6 +177,7 @@ def remove_row(row_id):
     
 @app.route('/checkout', methods=["GET","POST"])
 def checkout():
+    '''Render checkout template and display cart and address forms.  Deal with submitted data.'''  
     addressForm = AddressForm(csrf_enabled=False)
     cart = get_cart()
         
@@ -202,6 +211,7 @@ def checkout():
     
 @app.route('/pay')
 def pay():
+    '''Render pay template displaying cart and payment button.'''  
     address = '' 
     cart = get_cart()
     total = get_total()
@@ -216,13 +226,13 @@ def pay():
     
 @app.route('/error')
 def error():
-    
+    '''Render error template displaing flashed() message.'''  
     
     return render_template('error.html', banner = BANNER, contact=get_contact(),lines = get_lines())
     
 @app.route('/success')
 def success():
-    
+    '''Render success template displaying success or failure of order.'''  
     if(order_ok()):
         send_order()
         log_order(LOG_SUCCESS)
@@ -239,6 +249,7 @@ def success():
       
 @app.route('/shipping')
 def shipping():
+    '''Render shipping template to display SHIPPING and TERMS from config file.'''  
     shipping = SHIPPING
     terms = TERMS
     return render_template('shipping.html', banner = BANNER, contact=get_contact(),lines=get_lines(), shipping = shipping, terms = terms)
@@ -246,7 +257,7 @@ def shipping():
     
 @app.route('/ipn',methods=['GET','POST'])
 def ipn():
-
+    '''Recieve and process IPN details from paypal to verify correct payment and complete order or display error.'''  
     try:
         arg = ''
         request.parameter_storage_class = ImmutableOrderedMultiDict
