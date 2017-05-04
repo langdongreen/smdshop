@@ -1,0 +1,5 @@
+A very simple shopping cart system writen in using Flask/Python, Jinjai2 templates and Bootstrap for styling
+
+First learning project with Flask so is very simple.  It takes a list of products, calculates the total and sends the details to Paypal.  It then checks the IPN and emails the administrator and customer the order details.
+
+This is being witten for a shop that basically sells one product, with customisations and doesn't need the complexity of a full ecommerce solution.
